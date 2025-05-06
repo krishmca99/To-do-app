@@ -45,7 +45,7 @@ header, footer {
     border-radius: 5px;
   }
   .bi-check-circle,
-.bi-x-circle {
+   .bi-x-circle {
   font-size: 20px;
 }
 [contenteditable="true"] {
