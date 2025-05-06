@@ -7,29 +7,64 @@ const clearBtn = document.getElementById("clear-btn");
 
 countDis.style.display = "none";
 
-// create a list item (reusable)
+// Create a task item
 function createTaskElement(taskText) {
   const li = document.createElement("li");
-  li.textContent = taskText;
+  li.classList.add("d-flex", "justify-content-between", "align-items-center", "px-2", "py-2");
 
-  const spanElement = document.createElement("span");
-  spanElement.className = "close";
-  spanElement.style.verticalAlign = "middle";
+  const taskSpan = document.createElement("span");
+  taskSpan.textContent = taskText;
+  taskSpan.style.flexGrow = "1";
 
-  const closeIcon = document.createElement("i");
-  closeIcon.className = "bi bi-x-circle";
-  closeIcon.style.cssText = "cursor: pointer; font-size: 20px; float: right;";
-  closeIcon.setAttribute("aria-hidden", "true");
+  const buttonGroup = document.createElement("div");
 
-  // Delete event
-  closeIcon.addEventListener("click", () => {
+  // Edit button
+  const editBtn = document.createElement("i");
+  editBtn.className = "bi bi-pencil-square text-primary me-2"; // Blue color for edit button
+  editBtn.style.cursor = "pointer";
+  editBtn.title = "Edit task";
+
+  // Delete button (same blue color for delete icon)
+  const deleteBtn = document.createElement("i");
+  deleteBtn.className = "bi bi-x-circle text-primary"; // Blue color for delete icon
+  deleteBtn.style.cssText = "cursor: pointer; font-size: 20px;";
+  deleteBtn.title = "Delete task";
+
+  // Edit handler
+  editBtn.addEventListener("click", () => {
+    taskSpan.contentEditable = "true";
+    taskSpan.focus();
+    taskSpan.classList.add("border", "border-primary", "rounded", "px-1");
+
+    // Save on blur (when clicked away)
+    taskSpan.addEventListener("blur", () => {
+      taskSpan.contentEditable = "false";
+      taskSpan.classList.remove("border", "border-primary", "rounded", "px-1");
+      saveTasksToLocal();
+      refreshUI();
+    });
+
+    // Optional: Save on Enter key too
+    taskSpan.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault(); // prevent new line
+        taskSpan.blur();    // trigger blur event
+      }
+    });
+  });
+
+  // Delete handler (blue color for delete icon)
+  deleteBtn.addEventListener("click", () => {
     li.remove();
     saveTasksToLocal();
     refreshUI();
   });
 
-  li.appendChild(spanElement);
-  spanElement.appendChild(closeIcon);
+  buttonGroup.appendChild(editBtn);
+  buttonGroup.appendChild(deleteBtn);
+
+  li.appendChild(taskSpan);
+  li.appendChild(buttonGroup);
   listContainer.appendChild(li);
 }
 
@@ -69,24 +104,24 @@ clearBtn.addEventListener('click', () => {
   refreshUI();
 });
 
-// Save all tasks to localStorage
+// Save tasks to localStorage
 function saveTasksToLocal() {
   const tasks = [];
-  const listItems = listContainer.querySelectorAll("li");
-  listItems.forEach(li => {
-    tasks.push(li.firstChild.textContent.trim());
+  const listItems = listContainer.querySelectorAll("li span");
+  listItems.forEach(span => {
+    tasks.push(span.textContent.trim());
   });
   localStorage.setItem("Tasks", JSON.stringify(tasks));
 }
 
-// Refresh UI 
+// Update task count display
 function refreshUI() {
   const listLength = listContainer.children.length;
 
   if (listLength > 0) {
     noTask.style.display = "none";
     countDis.style.display = "block";
-    countDis.innerText = `You have ${listLength} tasks`;
+    countDis.innerText = `You have ${listLength} task${listLength > 1 ? 's' : ''}`;
     countDis.classList.remove("bg-warning", "bg-danger", "text-light");
 
     if (listLength > 10) {
