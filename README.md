@@ -8,6 +8,7 @@ A minimalist and intuitive To-Do list application designed to help you manage yo
 🚀 Features
 
 - ✅ Add new tasks
+- 📝 Edit existing tasks
 - 🗑️ Delete tasks
 - 🔄 Persistent data using `localStorage`
 - 📱 Responsive design for mobile and desktop
