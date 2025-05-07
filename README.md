@@ -19,5 +19,5 @@ A minimalist and intuitive To-Do list application designed to help you manage yo
 - Storage: `localStorage` for task persistence
 
 
-🔗 Clone the repository
+🔗 Clone the repository:
 git clone https://github.com/krishmca99/To-do-app.git
